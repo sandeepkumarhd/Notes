@@ -1,0 +1,38 @@
+/* Apply Roboto font family */
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+.header {
+  background-color: #007bff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo h1 {
+  color: white;
+  margin: 0;
+}
+
+.navLinks {
+  list-style-type: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #ffdd57; /* Hover effect with a golden yellow color */
+}

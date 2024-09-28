@@ -1,0 +1,13 @@
+.container {
+  width: 90%;
+  margin: 10px auto;
+}
+.createBtn {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+.input {
+  margin: 5px auto;
+}
