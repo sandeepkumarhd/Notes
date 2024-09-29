@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import styles from "../styles/Register.module.css";
 import axiosInstance from "../apiConfig";
 import { message } from "antd";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
+  const navigate = useNavigate();
+  const [loding, setLoding] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -32,14 +35,18 @@ const Register = () => {
   };
   const handleSubmit = async (e) => {
     if (validateData(formData)) {
+      setLoding(true);
       axiosInstance
         .post("/register", formData)
         .then((res) => {
-          message.success(res.data?.data?.message);
+          message.success(res.data?.message);
+          setLoding(false);
+          navigate("/");
         })
         .catch((err) => {
           console.log(err);
-          message.warning("Something went wrong");
+          setLoding(false);
+          message.warning(err.response?.data?.message);
         });
     }
 
@@ -95,9 +102,8 @@ const Register = () => {
             required
           />
         </div>
-
         <button onClick={handleSubmit} className={styles.submitButton}>
-          Sign Up
+          {loding ? "Please wait" : "Sign Up"}
         </button>
       </div>
     </div>

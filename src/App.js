@@ -6,6 +6,8 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Page404 from "./pages/Page404";
+import Protected from "./Components/Protected";
+import "./App.css"
 const Kav = () => {
   return (
     <div>
@@ -27,7 +29,7 @@ const routes = [
       },
       {
         path: "/home",
-        element: <Home />,
+        element: <Protected Component={Home} />,
       },
       {
         path: "/signup",
@@ -41,7 +43,7 @@ const routes = [
 const router = createBrowserRouter(routes);
 const App = () => {
   return (
-    <div>
+    <div className="app">
       <RouterProvider router={router} />
     </div>
   );

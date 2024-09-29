@@ -8,7 +8,10 @@ const Home = () => {
   const [IsLoding, setIsLoding] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [taskData, setTaskData] = useState({ delegationUser: "", status: "" });
+  const [taskData, setTaskData] = useState({
+    delegationUser: "",
+    status: "Select",
+  });
   const [IsEdit, setIsEdit] = useState(false);
   const [noteData, setNoteData] = useState({
     name: "",
@@ -39,7 +42,7 @@ const Home = () => {
     {
       title: "No.",
       dataIndex: "key",
-      width: 80,
+      width: 50,
       resposnive: ["md"],
     },
 
@@ -72,7 +75,7 @@ const Home = () => {
       title: "Status",
       dataIndex: "status",
       resposnive: ["md"],
-      width: 100,
+      width: 120,
       filters: [
         {
           text: "Completed",
@@ -87,6 +90,11 @@ const Home = () => {
         return (
           <Tooltip title={value === "Pending" ? "Update status" : value}>
             <Button
+              style={
+                value === "Completed"
+                  ? { background: "#28a745", color: "white" }
+                  : { background: "#ffc107", color: "#212529" }
+              }
               onClick={
                 value !== "Completed"
                   ? () => {
@@ -186,27 +194,39 @@ const Home = () => {
       })
       .catch((err) => {
         console.log(err);
+        message.warning(err.response?.data);
       });
   };
   const updateTaskStatus = async () => {
-    axiosInstance
-      .put(`/notes/${noteData.id}/status`, taskData)
-      .then((res) => {
-        message.success(res.data?.message);
-        setShowTaskModal(false);
-        getNotes();
-        setNoteData({
-          name: "",
-          text: "",
-          status: "Pending",
-          delegationUser: "",
-          completionTime: "",
-          sharedUsers: [],
+    if (taskData.delegationUser.trim() === "") {
+      message.warning("Please enter Delegation User");
+    } else if (taskData.status === "Select") {
+      message.warning("Please select the Status");
+    } else {
+      axiosInstance
+        .put(`/notes/${noteData.id}/status`, taskData)
+        .then((res) => {
+          message.success(res.data?.message);
+          setShowTaskModal(false);
+          getNotes();
+          setTaskData({
+            delegationUser: "",
+            status: "Select",
+          });
+          setNoteData({
+            name: "",
+            text: "",
+            status: "Pending",
+            delegationUser: "",
+            completionTime: "",
+            sharedUsers: [],
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          message.warning(err.response?.data?.error);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
   };
   const createNote = async () => {
     if (validateData(noteData) && !IsEdit) {
@@ -248,7 +268,7 @@ const Home = () => {
         })
         .catch((err) => {
           console.log(err);
-          message.warning("Something went wrong");
+          message.warning(err.response?.data);
         });
     }
   };
@@ -262,6 +282,7 @@ const Home = () => {
         <Button
           onClick={() => {
             setShowModal(true);
+            setIsEdit(false);
             setNoteData({
               name: "",
               text: "",
@@ -350,7 +371,7 @@ const Home = () => {
             }))
           }
           className={styles.input}
-          value={setData.delegationUser}
+          value={taskData.delegationUser}
           placeholder="Delegation User"
         />
         <Select

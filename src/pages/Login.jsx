@@ -6,6 +6,7 @@ import { message } from "antd";
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const [loding, setLoding] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -23,6 +24,7 @@ const Login = () => {
   };
   const handleSubmit = (e) => {
     if (validateData(formData)) {
+      setLoding(true);
       axiosInstance
         .post("/login", formData)
         .then((res) => {
@@ -30,12 +32,14 @@ const Login = () => {
             "user",
             JSON.stringify({ IsLoggedIn: true, token: res.data?.data?.token })
           );
+          setLoding(false);
           navigate("/home");
-          message.success(res.data?.data?.message);
+          message.success(res.data?.message);
         })
         .catch((err) => {
           console.log(err);
-          message.warning("Something went wrong");
+          setLoding(false);
+          message.warning(err.response?.data?.message);
         });
     }
   };
@@ -72,7 +76,7 @@ const Login = () => {
           />
         </div>
         <button className={styles.submitButton} onClick={handleSubmit}>
-          Login
+          {loding ? "Please wait" : "Login"}
         </button>
       </div>
     </div>
