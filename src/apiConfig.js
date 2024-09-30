@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
     Authorization: `Bearer ${user?.token}`, // Retrieve token from localStorage if available
   },
-  timeout: 10000, // Timeout set to 10 seconds
+  // timeout: 10000, // Timeout set to 10 seconds
 });
 axiosInstance.interceptors.request.use(
   (config) => {

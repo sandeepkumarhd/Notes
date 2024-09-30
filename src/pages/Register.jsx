@@ -12,7 +12,6 @@ const Register = () => {
     password: "",
     role: "user",
   });
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -41,7 +40,8 @@ const Register = () => {
         .then((res) => {
           message.success(res.data?.message);
           setLoding(false);
-          navigate("/");
+          console.log(res);
+          // navigate("/");
         })
         .catch((err) => {
           console.log(err);

@@ -2,10 +2,18 @@ import { Button, Input, message, Modal, Select, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../apiConfig";
 import styles from "../styles/Home.module.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
   const [IsLoding, setIsLoding] = useState(false);
+  const [searchValue, setSearchValue] = useState({
+    textPattern: "",
+    name: "",
+    status: "Select",
+    completionTime: "",
+  });
   const [showModal, setShowModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskData, setTaskData] = useState({
@@ -115,7 +123,7 @@ const Home = () => {
     {
       title: "Action",
       value: "value",
-      width: 130,
+      width: 180,
       render: (value, record) => {
         return (
           <>
@@ -126,7 +134,7 @@ const Home = () => {
                 alignItems: "center",
               }}
             >
-              <Tooltip placement="left" title={"Edit Notes"}>
+              <Tooltip placement="top" title={"Edit Notes"}>
                 <Button
                   onClick={() => {
                     setNoteData(record);
@@ -137,15 +145,29 @@ const Home = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    margin: "auto 10px",
+                    margin: "auto",
                   }}
                 >
                   Edit
                 </Button>
               </Tooltip>
-              <Tooltip placement="left" title={"Delete notes"}>
+              <Tooltip placement="top" title={"Delete notes"}>
                 <Button
                   onClick={() => deleteNote(record?.id)}
+                  style={{
+                    width: "90%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "auto 10px",
+                  }}
+                >
+                  Delete
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title={"View note details"}>
+                <Button
+                  onClick={() => navigate(`/details?id=${record.id}`)}
                   style={{
                     width: "90%",
                     display: "flex",
@@ -154,7 +176,7 @@ const Home = () => {
                     margin: "auto",
                   }}
                 >
-                  Delete
+                  View
                 </Button>
               </Tooltip>
             </div>
@@ -196,6 +218,35 @@ const Home = () => {
         console.log(err);
         message.warning(err.response?.data);
       });
+  };
+  const searchNote = async (noteId) => {
+    if (
+      !Object.values(searchValue).some(
+        (value) => value !== "" && value !== "Select"
+      )
+    ) {
+      message.warning("To search the note atleast enter one value.");
+    } else {
+      axiosInstance
+        .get(
+          `notes/search?textPattern=${searchValue.textPattern}&name=${searchValue.name}&status=${searchValue.status}&completionTime=${searchValue.completionTime}`
+        )
+        .then((res) => {
+          console.log(res);
+          message.success(res.data?.message);
+          getNotes();
+          setSearchValue({
+            textPattern: "",
+            name: "",
+            status: "Select",
+            completionTime: "",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          message.warning(err.response?.data);
+        });
+    }
   };
   const updateTaskStatus = async () => {
     if (taskData.delegationUser.trim() === "") {
@@ -279,6 +330,56 @@ const Home = () => {
     <div className={styles.container}>
       <div className={styles.createBtn}>
         <h1>All Notes</h1>
+        <div className={styles.searchNote}>
+          <Input
+            onChange={(e) =>
+              setSearchValue((pre) => ({
+                ...pre,
+                name: e.target.value,
+              }))
+            }
+            placeholder="Enter name to search"
+          />
+          <Input
+            style={{ margin: " auto 10px" }}
+            onChange={(e) =>
+              setSearchValue((pre) => ({
+                ...pre,
+                textPattern: e.target.value,
+              }))
+            }
+            placeholder="Enter text Pattern to search"
+          />
+          <Select
+            options={[
+              { label: "Pending", value: "Pending" },
+              { label: "Completed", value: "Completed" },
+            ]}
+            style={{ margin: " auto 10px" }}
+            onChange={(e) =>
+              setSearchValue((pre) => ({
+                ...pre,
+                status: e,
+              }))
+            }
+            value={searchValue.status}
+            placeholder="Enter text Pattern to search"
+          />
+          <Input
+            type="date"
+            onChange={(e) =>
+              setSearchValue((pre) => ({
+                ...pre,
+                completionTime: e.target.value,
+              }))
+            }
+          />
+          <Tooltip title="Click to search">
+            <Button style={{ marginLeft: "10px" }} onClick={searchNote}>
+              Search
+            </Button>
+          </Tooltip>
+        </div>
         <Button
           onClick={() => {
             setShowModal(true);

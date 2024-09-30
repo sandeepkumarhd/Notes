@@ -36,8 +36,8 @@ const Header = () => {
           {user && (
             <>
               <li>
-                <Link to="/notes" className={styles.navLink}>
-                  All Notes
+                <Link to="/users" className={styles.navLink}>
+                  All Users
                 </Link>
               </li>
               <li>

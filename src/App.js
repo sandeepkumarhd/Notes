@@ -7,7 +7,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Page404 from "./pages/Page404";
 import Protected from "./Components/Protected";
-import "./App.css"
+import "./App.css";
+import DetailsPage from "./pages/DetailsPage";
+import AllUsers from "./pages/AllUser";
 const Kav = () => {
   return (
     <div>
@@ -30,6 +32,14 @@ const routes = [
       {
         path: "/home",
         element: <Protected Component={Home} />,
+      },
+      {
+        path: "/details",
+        element: <Protected Component={DetailsPage} />,
+      },
+      {
+        path: "/users",
+        element: <Protected Component={AllUsers} />,
       },
       {
         path: "/signup",
